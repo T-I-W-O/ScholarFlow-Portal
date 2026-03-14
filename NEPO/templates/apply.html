@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply | NEPO Tech & Engineering Scholarship 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #1a1a1a;
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-nav { background-color: #1a202c; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; position: sticky; top: 0; z-index: 100; }
+        .red-bar { height: 4px; background-color: #e53e3e; width: 100%; }
+        
+        .form-card {
+            background: white;
+            padding: 30px 20px;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 6px;
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group { position: relative; display: flex; align-items: center; }
+        .phone-prefix { position: absolute; left: 12px; color: #14532d; font-weight: 800; border-right: 1px solid #e2e8f0; padding-right: 8px; }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .phone-input { padding-left: 65px; }
+        
+        .error-msg {
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: 4px;
+            font-weight: 600;
+            display: none;
+        }
+
+        input.invalid { border-color: #e53e3e; background-color: #fff5f5; }
+
+        .verification-note { background: #f0fff4; color: #22543d; padding: 10px; border-radius: 4px; font-size: 12px; margin-top: 5px; border: 1px solid #c6f6d5; }
+        .note-box { background: #fffaf0; color: #9c4221; padding: 12px; border-radius: 6px; font-size: 13px; margin-top: 15px; border-left: 4px solid #ed8936; display: none; }
+        
+        .btn-submit { background-color: #14532d; color: white; border: none; padding: 16px; width: 100%; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 25px; transition: opacity 0.2s; }
+
+        .login-prompt { text-align: center; margin-top: 15px; font-size: 14px; color: #4a5568; }
+        .login-link { color: #1a202c; font-weight: 700; text-decoration: underline; }
+        
+        .choices__inner { background-color: white !important; border-radius: 6px !important; border: 1px solid #e2e8f0 !important; min-height: 45px; }
+    </style>
+</head>
+<body>
+
+    {% include "header.html" %}
+
+    <main class="px-4">
+        <div class="max-w-xl mx-auto mt-6">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-extrabold text-gray-900">Application Portal</h1>
+                <p class="text-gray-500">Create your candidate profile</p>
+            </div>
+
+            <div class="form-card">
+                            {% if messages %}
+                                <div id="msg-container">
+                                    {% for message in messages %}
+                                        <div class="backend-error-box {% if message.tags == 'error' %}error-theme{% else %}success-theme{% endif %}">
+                                            <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %} mr-3"></i>
+                                            <span class="text-sm font-bold">{{ message }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <script>
+                                    setTimeout(() => {
+                                        const container = document.getElementById('msg-container');
+                                        if (container) container.style.display = 'none';
+                                    }, 5000);
+                                </script>
+                            {% endif %}
+                <form id="scholarshipForm" method="POST" novalidate>
+                    {% csrf_token %}
+                    
+                    <div>
+                        <label>Full Name</label>
+                        <input type="text" id="fullname" name="fullname" placeholder="Full legal name" required>
+                        <div class="error-msg" id="error-fullname">Full name is required.</div>
+                    </div>
+
+                    <div>
+                        <label>Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="student@example.com" required>
+                        <div class="error-msg" id="error-email">Please enter a valid email address.</div>
+                        <div class="verification-note">
+                            <i class="fas fa-info-circle mr-1"></i> Ensure this email is valid.
+                        </div>
+                    </div>
+
+                    <div>
+                        <label>Phone Number</label>
+                        <div class="input-group">
+                            <span class="phone-prefix">+234</span>
+                            <input type="tel" id="phone" name="phone" class="phone-input" placeholder="8012345678" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                        </div>
+                        <div class="error-msg" id="error-phone">Phone number must be exactly 10 digits.</div>
+                    </div>
+
+                    <div>
+                        <label>University</label>
+                        <select id="university" name="university" required><option value="">Loading universities...</option></select>
+                        <div class="error-msg" id="error-university">Please select your university.</div>
+                    </div>
+
+                    <div>
+                        <label>Course of Study</label>
+                        <select id="course" name="course" required><option value="">Select University first</option></select>
+                        <div class="error-msg" id="error-course">Please select your course of study.</div>
+                        <div id="course-note" class="note-box"><strong>STEM Eligibility:</strong> Only Science and Engineering courses are recognized.</div>
+                    </div>
+
+                    <div>
+                        <label>Create Password</label>
+                        <input type="password" id="password" name="password" placeholder="••••••••" required>
+                        <div class="error-msg" id="error-password">Password must be 8+ characters with at least 2 digits.</div>
+                    </div>
+
+                    <div>
+                        <label>Confirm Password</label>
+                        <input type="password" id="confirm_password" placeholder="••••••••" required>
+                        <div class="error-msg" id="error-confirm_password">Passwords do not match.</div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">REGISTER & APPLY</button>
+                    
+                    <p class="login-prompt">
+                        Already registered? <a href="{% url 'login' %}" class="login-link">LOGIN</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+    <script>
+        // Data and Choice Inits (Same as before)
+        const stemCourses = ["Aeronautical Engineering", "Agricultural Engineering", "Architecture", "Biochemistry", "Biology", "Biology Education", "Biomedical Engineering", "Biotechnology", "Botany", "Chemical Engineering", "Chemistry", "Chemistry Education", "Civil Engineering", "Computer Engineering", "Computer Science", "Computer Science Education", "Cyber Security", "Data Science", "Electrical/Electronic Engineering", "Food Science & Engineering", "Geology", "Industrial Chemistry", "Information Technology", "Mathematics", "Mathematics Education", "Mechanical Engineering", "Mechatronics Engineering", "Metallurgical Engineering", "Microbiology", "Mining Engineering", "Petroleum Engineering", "Physics", "Physics Education", "Software Engineering", "Statistics", "Systems Engineering", "Telecommunications Engineering", "Zoology"].sort();
+        const uniChoices = new Choices('#university', { searchEnabled: true, itemSelectText: '', placeholder: true, placeholderValue: 'Select University' });
+        const courseChoices = new Choices('#course', { searchEnabled: true, itemSelectText: '', placeholder: true, placeholderValue: 'Select Course' });
+
+        fetch("http://universities.hipolabs.com/search?country=Nigeria")
+            .then(res => res.json())
+            .then(data => {
+                const list = data.map(u => ({ value: u.name, label: u.name }));
+                uniChoices.clearChoices();
+                uniChoices.setChoices([{value: '', label: 'Select University', selected: true, disabled: true}].concat(list), 'value', 'label', true);
+            });
+
+        document.getElementById("university").addEventListener('change', function() {
+            document.getElementById("course-note").style.display = "block";
+            courseChoices.clearChoices();
+            courseChoices.setChoices([{value: '', label: 'Select Course', selected: true, disabled: true}].concat(stemCourses.map(c => ({ value: c, label: c }))), 'value', 'label', true);
+            hideError('university');
+        });
+
+        // Validation Logic Fix
+        const form = document.getElementById('scholarshipForm');
+
+        function showError(id, msg) {
+            const input = document.getElementById(id);
+            const errorDiv = document.getElementById('error-' + id);
+            if(input) input.classList.add('invalid');
+            if(errorDiv) { errorDiv.style.display = 'block'; if(msg) errorDiv.innerText = msg; }
+        }
+
+        function hideError(id) {
+            const input = document.getElementById(id);
+            const errorDiv = document.getElementById('error-' + id);
+            if(input) input.classList.remove('invalid');
+            if(errorDiv) errorDiv.style.display = 'none';
+        }
+
+        form.onsubmit = function(e) {
+            let isValid = true;
+
+            // Full Name
+            if (!document.getElementById('fullname').value.trim()) { showError('fullname'); isValid = false; }
+            // Email
+            const email = document.getElementById('email').value;
+            if (!email.includes('@') || !email.includes('.')) { showError('email'); isValid = false; }
+            // Phone
+            const phone = document.getElementById('phone').value;
+            if (phone.length !== 10) { showError('phone'); isValid = false; }
+            // University/Course
+            if (!document.getElementById('university').value) { showError('university'); isValid = false; }
+            if (!document.getElementById('course').value) { showError('course'); isValid = false; }
+            // Password
+            const pass = document.getElementById('password').value;
+            const confirm = document.getElementById('confirm_password').value;
+            const digitCount = (pass.match(/\d/g) || []).length;
+            if (pass.length < 8 || digitCount < 2) { showError('password'); isValid = false; }
+            if (pass !== confirm || confirm === "") { showError('confirm_password'); isValid = false; }
+
+            if (!isValid) {
+                e.preventDefault(); // ONLY stop submission if validation fails
+            } else {
+                // If valid, let the form submit normally to Django
+                document.querySelector('.btn-submit').innerText = "PROCESSING...";
+                document.querySelector('.btn-submit').disabled = true;
+            }
+        };
+
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => hideError(input.id));
+        });
+    </script>
+</body>
+</html>

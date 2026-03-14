@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM Scholarship Application</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7f6;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 24px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .note {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-top: 10px;
+            border-left: 4px solid #ffeeba;
+            display: none; /* Hidden until Uni is selected */
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>STEM Scholarship 2026</h2>
+    <p style="font-size: 14px; color: #666;">Apply for Science and Engineering funding.</p>
+
+    <form id="scholarshipForm">
+        <label>Full Name</label>
+        <input type="text" placeholder="Enter Full Name" required>
+
+        <label>Email Address</label>
+        <input type="email" placeholder="email@example.com" required>
+
+        <label>University</label>
+        <select id="university">
+            <option value="">Loading universities...</option>
+        </select>
+
+        <label>Course of Study</label>
+        <select id="course">
+            <option value="">Select University first</option>
+        </select>
+
+        <div id="course-note" class="note">
+            <strong>Eligibility Note:</strong> If your course is not listed above, it is because your field is not currently recognized as Science or Engineering related for this scholarship.
+        </div>
+
+        <button type="submit">Submit Application</button>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+<script>
+    // 1. THE STEM WHITELIST (Science, Engineering & Tech-Education)
+    const stemCourses = [
+        "Aeronautical Engineering", "Agricultural Engineering", "Architecture", 
+        "Biochemistry", "Biology", "Biology Education", "Biomedical Engineering", 
+        "Biotechnology", "Botany", "Chemical Engineering", "Chemistry", 
+        "Chemistry Education", "Civil Engineering", "Computer Engineering", 
+        "Computer Science", "Computer Science Education", "Cyber Security", 
+        "Data Science", "Electrical/Electronic Engineering", "Food Science & Engineering", 
+        "Geology", "Industrial Chemistry", "Information Technology", "Mathematics", 
+        "Mathematics Education", "Mechanical Engineering", "Mechatronics Engineering", 
+        "Metallurgical Engineering", "Microbiology", "Mining Engineering", 
+        "Petroleum Engineering", "Physics", "Physics Education", "Software Engineering", 
+        "Statistics", "Systems Engineering", "Telecommunications Engineering", "Zoology"
+    ].sort();
+
+    // 2. Initialize Choices.js
+    const uniChoices = new Choices('#university', { 
+        searchEnabled: true, 
+        itemSelectText: '',
+        placeholder: true,
+        placeholderValue: 'Type your university name...'
+    });
+
+    const courseChoices = new Choices('#course', { 
+        searchEnabled: true, 
+        itemSelectText: '',
+        placeholder: true,
+        placeholderValue: 'Search for your course...'
+    });
+
+    // 3. Fetch all Nigerian Universities
+    fetch("http://universities.hipolabs.com/search?country=Nigeria")
+        .then(res => res.json())
+        .then(data => {
+            const list = data.map(u => ({ value: u.name, label: u.name }));
+            uniChoices.clearChoices();
+            uniChoices.setChoices(list, 'value', 'label', true);
+        })
+        .catch(() => {
+            uniChoices.setChoices([{value: '', label: 'Error loading schools. Please refresh.'}]);
+        });
+
+    // 4. Update Course list and show Note when Uni is picked
+    document.getElementById("university").addEventListener('addItem', function() {
+        // Show the disclaimer note
+        document.getElementById("course-note").style.display = "block";
+
+        // Clear and fill Course dropdown with our STEM list
+        courseChoices.clearChoices();
+        const formattedStem = stemCourses.map(c => ({ value: c, label: c }));
+        courseChoices.setChoices(formattedStem, 'value', 'label', true);
+    });
+
+    // Form Handling
+    document.getElementById('scholarshipForm').onsubmit = (e) => {
+        e.preventDefault();
+        alert("Application Received! We will review your STEM eligibility.");
+    };
+</script>
+
+</body>
+</html>

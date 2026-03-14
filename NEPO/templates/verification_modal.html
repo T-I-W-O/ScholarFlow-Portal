@@ -1,0 +1,321 @@
+<style>
+    /* Full Page Overlay */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(3px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        padding: 10px;
+    }
+
+    /* Added Logout Button Style */
+    .overlay-logout {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        color: white;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 8px 15px;
+        border-radius: 6px;
+        transition: all 0.2s;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .overlay-logout:hover {
+        background: rgba(220, 38, 38, 0.8); /* Red on hover */
+        border-color: transparent;
+    }
+
+    /* Modal Content */
+    .modal-card {
+        background: white;
+        width: 100%;
+        max-width: 440px;
+        max-height: 95vh;
+        border-radius: 12px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+        animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(10px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+        background: #f8fafc;
+        padding: 16px;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: center;
+    }
+
+    .modal-body {
+        padding: 20px 24px;
+    }
+
+    .input-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 4px;
+    }
+
+    .readonly-box {
+        background: #f8fafc;
+        border: 1px solid #f1f5f9;
+        padding: 8px 12px;
+        border-radius: 6px;
+        color: #1e293b;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .modal-body input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 15px;
+        transition: all 0.2s;
+    }
+
+    .modal-body input:focus {
+        outline: none;
+        border-color: #14532d;
+        box-shadow: 0 0 0 3px rgba(20, 83, 45, 0.08);
+    }
+
+    .benefit-item {
+        display: flex;
+        gap: 10px;
+        font-size: 13px;
+        color: #475569;
+        margin-bottom: 8px;
+    }
+
+    .benefit-icon {
+        color: #14532d;
+        font-size: 12px;
+        margin-top: 2px;
+    }
+
+    .btn-pay {
+        background-color: #14532d;
+        color: white;
+        width: 100%;
+        padding: 14px;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 16px;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-pay:hover {
+        background-color: #0f3d21;
+    }
+
+    .btn-pay:disabled {
+        background-color: #94a3b8;
+        cursor: not-allowed;
+    }
+
+    .trust-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 12px;
+    }
+
+    /* New Error Box Style */
+    #error-container {
+        display: none;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        padding: 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="modal-overlay">
+    <a href="{% url 'logout' %}" class="overlay-logout">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+
+    <div class="modal-card">
+        <div class="modal-header">
+            <h2 class="text-lg font-extrabold text-slate-900 leading-tight">Student Status Verification</h2>
+            <p class="text-slate-500 text-xs">Verify your academic record to continue</p>
+        </div>
+
+        <div class="modal-body">
+            <div id="error-container">
+                <i class="fas fa-exclamation-circle mr-1"></i> <span id="error-text"></span>
+            </div>
+
+            <div class="mb-4">
+                <span class="input-label">University / Institution</span>
+                <div class="readonly-box truncate">{{ student.university }}</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                    <span class="input-label">Applicant</span>
+                    <div class="readonly-box truncate">{{ student.name }}</div>
+                </div>
+                <div>
+                    <span class="input-label">Course</span>
+                    <div class="readonly-box truncate">{{ student.course }}</div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="matric" class="input-label">Matriculation Number</label>
+                <input type="text" id="matric" placeholder="e.g. U2024/ENG/001" required>
+            </div>
+
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                <p class="text-[12px] font-bold text-slate-700 mb-2">Verification Benefits (₦500):</p>
+                <div class="benefit-item">
+                    <i class="fas fa-check benefit-icon"></i>
+                    <span>Confirm records with your institution.</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-check benefit-icon"></i>
+                    <span>Secure academic data collection.</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-check benefit-icon"></i>
+                    <span>Unlock scholarship applications.</span>
+                </div>
+            </div>
+
+            <div class="mt-3 text-center">
+                <span class="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                    <i class="fas fa-users mr-1"></i> 248 Students Verified
+                </span>
+            </div>
+
+            <button onclick="handlePayment()" class="btn-pay" id="pay-button">
+                <i class="fas fa-credit-card"></i>
+                PAY ₦500 & VERIFY
+            </button>
+
+            <div class="trust-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>Secure via Paystack / Flutterwave</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+
+    function showError(message) {
+        const container = document.getElementById('error-container');
+        document.getElementById('error-text').innerText = message;
+        container.style.display = 'block';
+    }
+
+    function hideError() {
+        document.getElementById('error-container').style.display = 'none';
+    }
+
+    function handlePayment() {
+        hideError();
+        const matric = document.getElementById('matric').value;
+        
+        if (!matric) {
+            showError("Please enter your matriculation number.");
+            return;
+        }
+        
+        const btn = document.getElementById('pay-button');
+        const originalContent = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Initializing...';
+        btn.disabled = true;
+
+        // --- NEW: Generate YOUR ID here so it matches Paystack ---
+        const randomDigits = Math.floor(10000 + Math.random() * 90000);
+        const myCustomRef = "NEPO-" + randomDigits;
+
+        let handler = PaystackPop.setup({
+            key: 'pk_test_713aabfe51366028caa4815efed9ef4489e2f3a8', 
+            email: '{{ student.email }}',
+            amount: 500 * 100, 
+            currency: 'NGN',
+            ref: myCustomRef, // <--- This forces Paystack to use YOUR ID
+            callback: function(response) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finalizing...';
+                
+                fetch("{% url 'verify_payment' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({
+                        reference: response.reference, // This will now be your NEPO-XXXXX ID
+                        matric: matric
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success') {
+                        window.location.href = "{% url 'success_page' %}";
+                    } else {
+                        btn.innerHTML = originalContent;
+                        btn.disabled = false;
+                        showError("Verification failed. Please contact support.");
+                    }
+                })
+                .catch(err => {
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
+                    showError("A server error occurred.");
+                });
+            },
+            onClose: function() {
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+            }
+        });
+
+        handler.openIframe();
+    }
+</script>

@@ -1,0 +1,14 @@
+<form method="post">
+    {% csrf_token %}
+    <input type="email" name="recipient_email" placeholder="Recipient Email" required><br><br>
+    <input type="text" name="subject" placeholder="Subject" required><br><br>
+    <textarea name="message" placeholder="Write your message here..."></textarea><br><br>
+    <button type="submit">Send Actual Email</button>
+</form>
+{% if messages %}
+    {% for message in messages %}
+        <p style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %};">
+            <strong>Result:</strong> {{ message }}
+        </p>
+    {% endfor %}
+{% endif %}

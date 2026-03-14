@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | NEPO Scholarship</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f1f5f9;
+            color: #1e293b;
+        }
+
+        /* Branding Colors */
+        .bg-nepo-navy { background-color: #1a202c; }
+        .text-nepo-red { color: #e53e3e; }
+        .bg-nepo-red { background-color: #e53e3e; }
+        .bg-nepo-green { background-color: #14532d; }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border-bottom: 3px solid #e2e8f0;
+        }
+
+        .today-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 99px;
+            background: #f0fff4;
+            color: #14532d;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .deadline-input {
+            border: 1px solid #cbd5e0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .status-pill {
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-verified { background: #dcfce7; color: #14532d; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    {% include "header.html" %}
+    <!-- Main Content Area (Centered & Full Width) -->
+    <main class="max-w-7xl mx-auto p-6 lg:p-10">
+        
+
+
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+            <div>
+                <div class="flex items-center gap-4">
+                    <h1 class="font-black text-3xl text-slate-800">System Overview</h1>
+                    
+                    <a href="{% url 'logout' %}" class="px-3 py-1 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors">
+                        Logout
+                    </a>
+                </div>
+                <p class="text-slate-500">Real-time scholarship application metrics</p>
+            </div>
+            
+            
+            <!-- Deadline Management Section -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                <div class="bg-amber-100 p-2 rounded-lg text-amber-600">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                    <span class="text-xs font-bold text-slate-500 uppercase">Deadline:</span>
+                    
+                    <input type="date" id="deadlineInput" class="deadline-input text-sm py-1 border-none focus:ring-0" value="{{ deadline_date }}">
+                    
+                    <button id="saveDeadlineBtn" class="bg-nepo-navy text-white px-4 py-1.5 rounded-lg font-bold text-xs hover:bg-slate-800 transition">
+                        SAVE
+                    </button>
+                    
+                    <span id="saveStatus" class="text-[10px] font-bold text-green-600 hidden">SAVED!</span>
+                </div>
+            </div>
+
+            <script>
+            document.getElementById('saveDeadlineBtn').addEventListener('click', function() {
+                const dateInput = document.getElementById('deadlineInput');
+                const dateValue = dateInput.value;
+                const btn = this;
+                const statusLabel = document.getElementById('saveStatus');
+
+                if (!dateValue) {
+                    alert("Please select a valid date.");
+                    return;
+                }
+
+                // UI Feedback
+                btn.innerText = "SAVING...";
+                btn.disabled = true;
+                statusLabel.classList.add('hidden');
+
+                fetch('/update-deadline/', { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Note: Use '{{ csrf_token }}' if this script is directly in the HTML file
+                        'X-CSRFToken': '{{ csrf_token }}' 
+                    },
+                    body: JSON.stringify({ 'date': dateValue })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Briefly show the "SAVED!" label
+                        statusLabel.classList.remove('hidden');
+                        setTimeout(() => {
+                            statusLabel.classList.add('hidden');
+                        }, 3000);
+                    } else {
+                        alert('Update failed: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error saving deadline. Check console for details.');
+                })
+                .finally(() => {
+                    btn.innerText = "SAVE";
+                    btn.disabled = false;
+                });
+            });
+            </script>
+        </div>
+
+        <!-- Counters Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    
+            <div class="stat-card">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="today-badge">
+                        <i class="fas fa-arrow-up"></i> +{{ today_visits }} Today
+                    </div>
+                </div>
+                <p class="text-slate-500 text-sm font-medium uppercase tracking-wider">Website Visits</p>
+                <h2 class="text-3xl font-black text-slate-800">{{ total_visits }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-purple-50 text-purple-600 rounded-lg">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="today-badge">
+                        <i class="fas fa-plus"></i> +{{ today_applicants }} Today
+                    </div>
+                </div>
+                <p class="text-slate-500 text-sm font-medium uppercase tracking-wider">Total Applicants</p>
+                <h2 class="text-3xl font-black text-slate-800">{{ total_applicants }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-green-50 text-green-600 rounded-lg">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                    <div class="today-badge">
+                        <i class="fas fa-coins"></i> +{{ today_paid }} Today
+                    </div>
+                </div>
+                <p class="text-slate-500 text-sm font-medium uppercase tracking-wider">Paid Verifications</p>
+                <h2 class="text-3xl font-black text-slate-800">{{ total_paid }}</h2>
+            </div>
+        </div>        
+        <!-- Applicants Table -->
+        <div class="table-container">
+            <div class="p-6 border-b flex flex-col sm:flex-row justify-between items-center gap-4">
+                <h3 class="font-bold text-lg">Recent Applications</h3>
+                <div class="relative w-full sm:w-72">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search applicants..." 
+                        class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 outline-none">
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                        <tr>
+                            <th class="px-6 py-4">Applicant</th>
+                            <th class="px-6 py-4">University</th>
+                            <th class="px-6 py-4">Matric Number</th>
+                            <th class="px-6 py-4">Course</th>
+                            <th class="px-6 py-4">Number</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4">Transaction ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-100 bg-white"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="p-4 bg-slate-50 border-t flex justify-between items-center text-xs text-slate-500">
+            <span id="paginationInfo">Showing 0 of 0 applicants</span>
+            <div class="flex gap-2">
+                <button id="prevBtn" class="px-3 py-1 bg-white border rounded shadow-sm hover:bg-gray-50 disabled:opacity-50">Previous</button>
+                <button id="nextBtn" class="px-3 py-1 bg-white border rounded shadow-sm hover:bg-gray-50 disabled:opacity-50">Next</button>
+            </div>
+        </div>
+        </div>
+    </main>
+    <script>
+    let currentPage = 1;
+    let searchQuery = '';
+
+    const tableBody = document.getElementById('tableBody');
+    const searchInput = document.getElementById('searchInput');
+    const paginationInfo = document.getElementById('paginationInfo');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    // The function that fetches data from the server without reloading
+    async function fetchStudents() {
+        const response = await fetch(`/student-api/?page=${currentPage}&search=${searchQuery}`);
+        const data = await response.json();
+
+        renderTable(data.students);
+        updateUI(data);
+    }
+
+    function renderTable(students) {
+        tableBody.innerHTML = '';
+        if (students.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="7" class="p-10 text-center text-slate-400">No results found</td></tr>';
+            return;
+        }
+
+        students.forEach(s => {
+            const statusClass = s.paid ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
+            const row = `
+                <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-slate-800">${s.name}</div>
+                        <div class="text-xs text-slate-400">${s.email}</div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-slate-600">${s.university}</td>
+                    <td class="px-6 py-4 text-sm font-mono">${s.matric}</td>
+                    <td class="px-6 py-4 text-sm text-slate-600">${s.course}</td>
+                    <td class="px-6 py-4 text-sm text-slate-600">${s.number}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded text-xs font-bold ${statusClass}">${s.paid ? 'Paid' : 'Unpaid'}</span>
+                    </td>
+                    <td class="px-6 py-4 text-sm font-mono text-slate-500">${s.transaction_id}</td>
+                </tr>`;
+            tableBody.insertAdjacentHTML('beforeend', row);
+        });
+    }
+
+    function updateUI(data) {
+        paginationInfo.innerText = `Showing ${data.start_index} to ${data.end_index} of ${data.total_count.toLocaleString()} applicants`;
+        prevBtn.disabled = !data.has_prev;
+        nextBtn.disabled = !data.has_next;
+    }
+
+    // Search input event
+    searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        currentPage = 1; // Reset to page 1 on new search
+        fetchStudents();
+    });
+
+    // Pagination events
+    prevBtn.addEventListener('click', () => { currentPage--; fetchStudents(); });
+    nextBtn.addEventListener('click', () => { currentPage++; fetchStudents(); });
+
+    // Initial load
+    fetchStudents();
+</script>
+
+    <footer class="py-10 text-center text-slate-400 text-xs">
+        NEPO Scholarship Administration Panel &copy; 2026
+    </footer>
+
+</body>
+</html>

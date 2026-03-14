@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Code | NEPO Scholarship</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1a1a1a; }
+        .form-card { background: white; padding: 40px 25px; width: 100%; max-width: 480px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 40px auto; text-align: center; }
+        .otp-container { display: flex; gap: 12px; justify-content: center; margin: 30px 0; }
+        .otp-input { width: 50px; height: 60px; border: 2px solid #e2e8f0; border-radius: 8px; text-align: center; font-size: 24px; font-weight: 800; color: #1a202c; background-color: #f8fafc; transition: all 0.2s; }
+        .otp-input:focus { outline: none; border-color: #14532d; background-color: #fff; box-shadow: 0 0 0 4px rgba(20, 83, 45, 0.1); }
+        
+        /* Error State */
+        .otp-input.error { border-color: #ef4444; background-color: #fef2f2; animation: shake 0.2s ease-in-out 0s 2; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        .btn-verify { background-color: #14532d; color: white; padding: 16px; width: 100%; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-expired { background-color: #4a5568; color: white; padding: 12px; width: 100%; border-radius: 6px; font-size: 14px; display: block; margin-top: 10px; text-decoration: none; }
+        .alert { background: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 6px; font-size: 13px; margin-bottom: 20px; border: 1px solid #f87171; }
+    </style>
+</head>
+<body>
+{% include "header.html" %}
+    <main class="px-4">
+        <div class="max-w-xl mx-auto mt-12">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-extrabold text-gray-900">Verify Your Identity</h1>
+                <p class="text-gray-500 mt-2">Enter the code sent to <strong>{{ request.session.reset_email }}</strong></p>
+            </div>
+
+            <div class="form-card">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert"><i class="fas fa-exclamation-triangle mr-2"></i> {{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <form id="otpForm" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="otp" id="fullCode">
+                    
+                    <div class="otp-container">
+                        <input type="text" maxlength="1" class="otp-input {% if error %}error{% endif %}" pattern="\d*" inputmode="numeric" required autofocus>
+                        <input type="text" maxlength="1" class="otp-input {% if error %}error{% endif %}" pattern="\d*" inputmode="numeric" required>
+                        <input type="text" maxlength="1" class="otp-input {% if error %}error{% endif %}" pattern="\d*" inputmode="numeric" required>
+                        <input type="text" maxlength="1" class="otp-input {% if error %}error{% endif %}" pattern="\d*" inputmode="numeric" required>
+                        <input type="text" maxlength="1" class="otp-input {% if error %}error{% endif %}" pattern="\d*" inputmode="numeric" required>
+                        <input type="text" maxlength="1" class="otp-input {% if error %}error{% endif %}" pattern="\d*" inputmode="numeric" required>
+                    </div>
+
+                    {% if expired %}
+                        <a href="{% url 'forget' %}" class="btn-expired">REQUEST NEW CODE</a>
+                    {% else %}
+                        <button type="submit" class="btn-verify">VERIFY & CONTINUE</button>
+                    {% endif %}
+                </form>
+
+                <p class="mt-6 text-sm text-gray-500">
+                    Didn't get it? <a href="{% url 'forget' %}" class="text-green-800 font-bold underline">Resend</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const inputs = document.querySelectorAll('.otp-input');
+        const form = document.getElementById('otpForm');
+        const fullCodeInput = document.getElementById('fullCode');
+
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length > 1) e.target.value = e.target.value.slice(0, 1);
+                
+                if (e.target.value && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+
+                // AUTO-TRIGGER LOGIC
+                const code = Array.from(inputs).map(i => i.value).join('');
+                if (code.length === 6) {
+                    fullCodeInput.value = code;
+                    form.submit(); // Automatically submits the form
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

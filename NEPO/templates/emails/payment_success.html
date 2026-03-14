@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - NepoScholarship</title>
+    <style>
+        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+        table { border-collapse: collapse !important; }
+        body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #f8fafc; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; }
+
+        @media screen and (max-width: 600px) {
+            .container { width: 100% !important; max-width: 100% !important; }
+            .content { padding: 20px !important; }
+        }
+    </style>
+</head>
+<body>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center" bgcolor="#f8fafc">
+                <table border="0" cellpadding="0" cellspacing="0" width="600" class="container" style="background-color: #ffffff; margin: 20px 0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    
+                    <tr>
+                        <td align="left" style="padding: 25px 40px; background-color: #1a202c;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td style="color: #ffffff; font-size: 24px; font-weight: bold; letter-spacing: 1px;">
+                                        NEPO <span style="color: #94a3b8; font-weight: normal;">SCHOLARSHIP</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td height="4" style="background-color: #e53e3e; line-height: 4px; font-size: 4px;">&nbsp;</td>
+                    </tr>
+
+                    <tr>
+                        <td class="content" style="padding: 40px; color: #2d3748;">
+                            <div style="text-align: center; margin-bottom: 30px;">
+                                <div style="display: inline-block; width: 60px; height: 60px; background-color: #f0fff4; border-radius: 50%; line-height: 60px; color: #14532d; font-size: 30px; border: 2px solid #dcfce7;">
+                                    ✓
+                                </div>
+                            </div>
+
+                            <h1 style="margin: 0 0 20px 0; font-size: 22px; font-weight: 800; color: #1a202c; text-align: center;">Verification Payment Successful</h1>
+                            
+                            <p style="margin: 0 0 15px 0; font-size: 16px; line-height: 1.6;">Hello {{ student.name }},</p>
+                            
+                            <p style="margin: 0 0 15px 0; font-size: 16px; line-height: 1.6;">
+                                We are pleased to confirm that your payment of <strong>₦500.00</strong> for student status verification has been successfully processed.
+                            </p>
+                            
+                            <div style="background-color: #f8fafc; border-left: 4px solid #14532d; padding: 15px; margin: 25px 0;">
+                                <p style="margin: 0; font-size: 15px; font-weight: bold; color: #1a202c;">What happens next?</p>
+                                <p style="margin: 5px 0 0 0; font-size: 14px; color: #4a5568;">
+                                    Your matriculation information is now being cross-referenced with your institution's academic database. Our team is working to verify your profile.
+                                </p>
+                            </div>
+
+                            <p style="margin: 0 0 25px 0; font-size: 16px; line-height: 1.6;">
+                                We will reach out to you via this email address as soon as your verification is complete. Once verified, your dashboard will be unlocked, and you will be able to proceed with your scholarship application.
+                            </p>
+
+                            <p style="margin: 0 0 10px 0; font-size: 14px; color: #718096;">
+                                <strong>Transaction ID:</strong> {{ transaction_id }}<br>
+                                <strong>Date:</strong> {{ payment_date }}
+                            </p>
+
+                            <p style="margin: 40px 0 0 0; font-size: 16px; line-height: 1.6; border-top: 1px solid #edf2f7; padding-top: 20px;">
+                                Best regards,<br>
+                                <strong>The NepoScholarship Team</strong>
+                            </p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 30px 40px; background-color: #f1f5f9; color: #64748b; font-size: 12px; text-align: center;">
+                            <p style="margin: 0 0 10px 0;">&copy; 2026 NEPO Foundation. All rights reserved.</p>
+                            <p style="margin: 0;">If you have any questions regarding your payment, please contact our support desk.</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

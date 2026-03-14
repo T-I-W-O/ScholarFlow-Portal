@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | NEPO Tech & Engineering Scholarship 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8fafc; color: #1a1a1a; margin: 0; padding: 0;
+        }
+
+        .form-card {
+            background: white; padding: 35px 25px; width: 100%; max-width: 450px;
+            border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin: 40px auto;
+        }
+
+        label {
+            display: block; margin-top: 20px; margin-bottom: 6px; font-weight: 700;
+            color: #2d3748; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px;
+            box-sizing: border-box; font-size: 16px;
+        }
+
+        .error-banner {
+            background-color: #fff5f5;
+            color: #c53030;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #feb2b2;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-login {
+            background-color: #1a202c; color: white; border: none; padding: 16px;
+            width: 100%; border-radius: 6px; font-size: 16px; font-weight: bold;
+            cursor: pointer; margin-top: 30px;
+        }
+
+        .register-link { color: #14532d; font-weight: 700; text-decoration: underline; }
+        .forgot-pass { display: block; text-align: right; margin-top: 8px; font-size: 12px; color: #718096; }
+    </style>
+</head>
+<body>
+
+    {% include "header.html" %}
+
+    <main class="px-4">
+        <div class="max-w-xl mx-auto mt-12">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900">Welcome Back</h1>
+                <p class="text-gray-500 mt-2">Sign in to manage your scholarship application</p>
+            </div>
+
+            <div class="form-card">
+                {% if error %}
+                <div class="error-banner">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                <form id="loginForm" method="POST">
+                    {% csrf_token %}
+                    
+                    <label>Email Address</label>
+                    <input type="email" name="email" id="email" value="{{ email_val|default:'' }}" placeholder="Enter your email" required>
+
+                    <label>Password</label>
+                    <input type="password" name="password" id="password" placeholder="••••••••" required>
+                    <a href="{% url 'forget' %}" class="forgot-pass">Forgot password?</a>
+
+                    <button type="submit" class="btn-login">SIGN IN</button>
+                    
+                    <p class="register-prompt text-center mt-5">
+                        Not registered? <a href="{% url 'apply' %}" class="register-link">REGISTER & APPLY</a>
+                    </p>
+                </form>
+            </div>
+            
+            <p class="text-center text-xs text-gray-400 mt-10 pb-10">
+                Secured Login Gateway <i class="fas fa-lock ml-1"></i><br>
+                © 2026 NEPO Foundation
+            </p>
+        </div>
+    </main>
+
+    {% if show_modal %}
+        {% include "verification_modal.html" %}
+    {% endif %}
+
+<script>
+    function toggleMenu() {
+        const sideNav = document.getElementById('sideNav');
+        const mask = document.getElementById('overlayMask');
+        if (sideNav && mask) {
+            sideNav.classList.toggle('active');
+            mask.style.display = sideNav.classList.contains('active') ? 'block' : 'none';
+        }
+    }
+
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.onsubmit = function() {
+            const btn = this.querySelector('.btn-login');
+            btn.innerText = "VERIFYING...";
+            btn.style.opacity = "0.7";
+        };
+    }
+</script>
+</body>
+</html>

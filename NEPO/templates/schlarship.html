@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEPO Scholarship | 2026 Tech & Engineering Grant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
+            margin: 0;
+            padding: 0;
+        }
+        .ad-slide img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+        }
+        /* Essential Layout Styles */
+        .top-nav { background-color: #1a202c; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; position: sticky; top: 0; z-index: 100; }
+        .red-bar { height: 4px; background-color: #e53e3e; width: 100%; }
+        .side-nav { position: fixed; top: 0; left: -100%; width: 300px; height: 100%; background: white; z-index: 200; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 4px 0 15px rgba(0,0,0,0.3); display: flex; flex-direction: column; }
+        .side-nav.active { left: 0; }
+        .overlay-mask { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 150; }
+        .page-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a202c; color: white; z-index: 300; display: none; flex-direction: column; padding: 40px 20px; overflow-y: auto; }
+
+        /* Buttons & Content */
+        .apply-btn-main {
+            background-color: #14532d;
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            padding: 16px;
+            border-radius: 4px;
+            display: block;
+            width: 100%;
+            margin: 20px 0;
+            font-size: 16px;
+            border: none;
+        }
+
+        .share-btn-main {
+            background-color: #450a0a;
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            padding: 16px;
+            border-radius: 4px;
+            display: block;
+            width: 100%;
+            border: none;
+        }
+
+        .nav-link {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .nav-btn-navy {
+            margin: 10px 20px;
+            padding: 12px;
+            background-color: #1a202c;
+            color: white;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .nav-btn-outline-navy {
+            margin: 0 20px 10px 20px;
+            padding: 12px;
+            border: 2px solid #1a202c;
+            color: #1a202c;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .breadcrumb {
+            font-size: 13px;
+            color: #718096;
+            margin: 15px 0;
+        }
+
+        .content-body h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-left: 4px solid #e53e3e;
+            padding-left: 10px;
+        }
+
+        /* Slider Styles */
+        .ad-slider-container {
+            width: 100%;
+            height: 120px;
+            overflow: hidden;
+            position: relative;
+            background: #f7fafc;
+            border: 1px solid #edf2f7;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .ad-slides {
+            display: flex;
+            width: 300%;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .ad-slide {
+            width: 33.333%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #a0aec0;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .ad-label {
+            position: absolute;
+            top: 2px;
+            right: 5px;
+            font-size: 10px;
+            color: #cbd5e0;
+            z-index: 10;
+        }
+
+        /* Countdown Style */
+        .deadline-box {
+            background-color: #fff5f5;
+            border: 1px dashed #feb2b2;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 25px;
+            margin-bottom: 40px;
+        }
+        
+        #countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .timer-unit {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .timer-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: #c53030;
+        }
+
+        .timer-label {
+            font-size: 10px;
+            color: #718096;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    {% include "header.html" %}
+    {% load static %}
+    <main class="max-w-xl mx-auto px-4">
+        
+        <div class="breadcrumb">
+            Home › Education › Scholarship › NEPO 2026
+        </div>
+
+        <h1 class="text-[22px] font-bold leading-tight mb-4 text-gray-900">
+            NEPO Tech and Engineering Scholarship for Nigerian Undergraduates 2026 | Application Guide
+        </h1>
+
+        <div class="mb-6 rounded-md overflow-hidden shadow-sm">
+            <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1000" alt="Nigerian Tech Students" class="w-full h-auto">
+        </div>
+
+        <div class="content-body text-[17px] leading-relaxed text-gray-800 pb-10">
+            <p class="mb-4">
+                The NEPO Foundation is currently accepting applications for its 2026 Technical Excellence Grant. This initiative is designed for Nigerian students who are passionate about Engineering and Technology.
+            </p>
+
+            <h2>Eligibility Criteria</h2>
+            <ul class="list-disc pl-5 space-y-3">
+                <li><strong>Institution:</strong> Must be a full-time undergraduate in a Nigerian University.</li>
+                <li><strong>Field of Study:</strong> Open strictly to <strong>Engineering</strong> (All branches) and <strong>Technology</strong> (Computer Science, Software Engineering, IT, etc.) departments.</li>
+                <li><strong>Academic Standing:</strong> Minimum 2.1 or equivalent CGPA.</li>
+                <li><strong>Nationality:</strong> Open to Nigerian citizens only.</li>
+            </ul>
+
+            <h2>Benefits of the Award</h2>
+            <p>The NEPO Scholarship provides comprehensive support to selected finalists:</p>
+            <ul class="list-disc pl-5 space-y-2 mt-2">
+                <li>₦1,000,000 cash grant for 10 deserving students.</li>
+                <li>5 High-performance Engineering Laptops for the top 5 candidates.</li>
+                <li>Access to exclusive tech workshops and job placements.</li>
+            </ul>
+
+            <div class="ad-slider-container">
+    <span class="ad-label">ADVERTISEMENT</span>
+
+    <div class="ad-slides" id="adSlides">
+
+        <a href="https://www.temu.com" target="_blank" class="ad-slide">
+            <img src="{% static 'images/temuads1.jpg' %}" alt="Temu Ad 1">
+        </a>
+
+        <a href="https://www.temu.com" target="_blank" class="ad-slide">
+            <img src="{% static 'images/temuads2.jpg' %}" alt="Temu Ad 2">
+        </a>
+
+        <a href="https://www.temu.com" target="_blank" class="ad-slide">
+            <img src="{% static 'images/temuads3.jpg' %}" alt="Temu Ad 3">
+        </a>
+
+    </div>
+</div>
+
+            <h2 id="apply">Application Process</h2>
+            <div class="bg-gray-50 border-l-4 border-green-800 p-5 my-6">
+                <p class="font-bold mb-2">How to apply:</p>
+                <ol class="list-decimal pl-5 space-y-2">
+                    <li>Create an account on the official NEPO portal.</li>
+                    <li>Login with your credentials.</li>
+                    <li>Upload your current <strong>Academic Transcript</strong>.</li>
+                    <li>Complete the innovation questionnaire and submit.</li>
+                </ol>
+            </div>
+
+            <a href="{% url 'apply' %}" class="apply-btn-main shadow-md" role="button">
+                CLICK HERE TO APPLY NOW
+            </a>
+
+            <button onclick="shareLink()" class="share-btn-main shadow-md mb-8">
+                SHARE TO WHATSAPP / FACEBOOK
+            </button>
+
+            <div class="deadline-box">
+                <div class="text-gray-600 font-bold uppercase text-xs tracking-widest mb-1">Application Deadline</div>
+                
+                <div class="text-xl font-bold text-gray-900 mb-4">
+                    {% if deadline %}
+                        {{ deadline.date|date:"F d, Y" }}
+                    {% else %}
+                        TBA
+                    {% endif %}
+                </div>
+
+                <div id="countdown-timer">
+                    <div class="timer-unit"><span class="timer-val" id="days">00</span><span class="timer-label">Days</span></div>
+                    <div class="timer-unit"><span class="timer-val" id="hours">00</span><span class="timer-label">Hrs</span></div>
+                    <div class="timer-unit"><span class="timer-val" id="minutes">00</span><span class="timer-label">Min</span></div>
+                    <div class="timer-unit"><span class="timer-val" id="seconds">00</span><span class="timer-label">Sec</span></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-100 py-10 px-6 border-t text-center">
+        <div class="max-w-xl mx-auto">
+            <p class="text-gray-600 text-sm mb-4">NEPO Scholarship Foundation: Empowering Innovation in Nigeria.</p>
+            <p class="text-gray-400 text-xs">Copyright © 2026 NEPO Scholarship. All rights reserved.</p>
+        </div>
+    </footer>
+
+  <script>
+    // --- MENU & OVERLAY LOGIC (Keep existing) ---
+    function toggleMenu() {
+        const sideNav = document.getElementById('sideNav');
+        const mask = document.getElementById('overlayMask');
+        sideNav.classList.toggle('active');
+        mask.style.display = sideNav.classList.contains('active') ? 'block' : 'none';
+    }
+
+    function showOverlay(id) {
+        document.getElementById(id).style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        if(document.getElementById('sideNav').classList.contains('active')) toggleMenu();
+    }
+
+    function hideOverlay(id) {
+        document.getElementById(id).style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // --- SHARE & COPY LOGIC (Keep existing) ---
+    function shareLink() {
+        const shareUrl = window.location.href;
+        // Fetch the deadline date string from the HTML to keep share text accurate
+        const dateText = "{{ deadline.date|date:'d F Y'|default:'TBA' }}";
+        
+        const shareText = `🚀 Tech & Engineering students in Nigeria!
+
+Apply for this scholarship and stand a chance to win:
+💰 ₦10,000,000 for 10 students
+💻 5 laptops for 5 winners
+
+📅 Deadline: ${dateText}
+
+Click the link to apply:
+${shareUrl}`;
+
+        const el = document.createElement('textarea');
+        el.value = shareText;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+
+        showToast("Copied!");
+    }
+
+    function showToast(message) {
+        const toast = document.createElement("div");
+        toast.textContent = message;
+        Object.assign(toast.style, {
+            position: "fixed",
+            bottom: "80px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            backgroundColor: "#333",
+            color: "#fff",
+            padding: "8px 20px",
+            borderRadius: "25px",
+            fontSize: "14px",
+            fontWeight: "bold",
+            zIndex: "9999",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            transition: "opacity 0.4s ease, transform 0.4s ease",
+            opacity: "0"
+        });
+        document.body.appendChild(toast);
+        setTimeout(() => { 
+            toast.style.opacity = "1"; 
+            toast.style.transform = "translateX(-50%) translateY(-10px)";
+        }, 10);
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            setTimeout(() => { document.body.removeChild(toast); }, 400);
+        }, 2000);
+    }
+
+    // --- AD SLIDER LOGIC (Keep existing) ---
+    let currentSlide = 0;
+    const slidesContainer = document.getElementById('adSlides');
+    const totalSlides = 3;
+
+    function nextSlide() {
+        if (slidesContainer) {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            slidesContainer.style.transform = `translateX(-${currentSlide * 33.333}%)`;
+        }
+    }
+    setInterval(nextSlide, 3000);
+
+    // --- UPDATED COUNTDOWN LOGIC (Dynamic from Model) ---
+    // We get the date from Django and set the time to the very end of that day
+    const rawDate = "{{ deadline.date|date:'Y-m-d' }}";
+    
+    if (rawDate) {
+        const deadline = new Date(`${rawDate}T23:59:59`).getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = deadline - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            if(document.getElementById("days")) {
+                // Ensure we don't show negative numbers
+                document.getElementById("days").innerHTML = Math.max(0, days).toString().padStart(2, '0');
+                document.getElementById("hours").innerHTML = Math.max(0, hours).toString().padStart(2, '0');
+                document.getElementById("minutes").innerHTML = Math.max(0, minutes).toString().padStart(2, '0');
+                document.getElementById("seconds").innerHTML = Math.max(0, seconds).toString().padStart(2, '0');
+            }
+
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                if(document.getElementById("countdown-timer")) {
+                    document.getElementById("countdown-timer").innerHTML = "<div class='text-red-600 font-bold text-center py-2'>APPLICATIONS CLOSED</div>";
+                }
+            }
+        }
+
+        const countdownInterval = setInterval(updateCountdown, 1000);
+        updateCountdown();
+    } else {
+        // Fallback if no date exists in the database
+        if(document.getElementById("countdown-timer")) {
+            document.getElementById("countdown-timer").innerHTML = "<span class='text-gray-400'>Deadline Pending</span>";
+        }
+    }
+</script>
+</body>
+</html>
