@@ -2,6 +2,9 @@
 
 A full-stack scholarship application management system built with **Django**. This platform streamlines the journey from student application to admin oversight, featuring secure authentication and integrated payment verification.
 
+## 🚀 Live Demo
+[Click here to view](https://scholarflow-portal.onrender.com/)
+
 ## 🚀 Key Features
 * **User Authentication:** Secure login/registration for students to manage their profiles.
 * **Application Tracking:** Students can submit matriculation details and monitor their selection status.
