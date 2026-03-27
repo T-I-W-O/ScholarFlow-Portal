@@ -174,12 +174,25 @@
         const courseChoices = new Choices('#course', { searchEnabled: true, itemSelectText: '', placeholder: true, placeholderValue: 'Select Course' });
 
         fetch("https://universities.hipolabs.com/search?country=Nigeria")
-            .then(res => res.json())
-            .then(data => {
-                const list = data.map(u => ({ value: u.name, label: u.name }));
-                uniChoices.clearChoices();
-                uniChoices.setChoices([{value: '', label: 'Select University', selected: true, disabled: true}].concat(list), 'value', 'label', true);
-            });
+    .then(res => res.json())
+    .then(data => {
+        const list = data.map(u => ({ value: u.name, label: u.name }));
+        uniChoices.clearChoices();
+        uniChoices.setChoices(
+            [{value: '', label: 'Select University', selected: true, disabled: true}]
+            .concat(list),
+            'value',
+            'label',
+            true
+        );
+    })
+    .catch(err => {
+        console.error(err);
+        uniChoices.clearChoices();
+        uniChoices.setChoices([
+            { value: '', label: 'Failed to load universities', selected: true, disabled: true }
+        ], 'value', 'label', true);
+    });
 
         document.getElementById("university").addEventListener('change', function() {
             document.getElementById("course-note").style.display = "block";
