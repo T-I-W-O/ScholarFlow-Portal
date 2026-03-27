@@ -16,8 +16,13 @@ from django.utils.html import strip_tags
 from django.views.decorators.csrf import csrf_exempt
 from .models import * # Note: Generally better to list models explicitly
 from .decorators import admin_only
-
+import requests
 #---------------------------------------
+def get_universities(request):
+    url = "https://universities.hipolabs.com/search?country=Nigeria"
+    res = requests.get(url)
+    return JsonResponse(res.json(), safe=False)
+
 
 def apply(request):
     if request.method == 'POST':
