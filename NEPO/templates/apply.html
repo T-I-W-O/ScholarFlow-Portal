@@ -173,7 +173,7 @@
         const uniChoices = new Choices('#university', { searchEnabled: true, itemSelectText: '', placeholder: true, placeholderValue: 'Select University' });
         const courseChoices = new Choices('#course', { searchEnabled: true, itemSelectText: '', placeholder: true, placeholderValue: 'Select Course' });
 
-        fetch("https://universities.hipolabs.com/search?country=Nigeria")
+        fetch("/api/universities/")
     .then(res => res.json())
     .then(data => {
         const list = data.map(u => ({ value: u.name, label: u.name }));
