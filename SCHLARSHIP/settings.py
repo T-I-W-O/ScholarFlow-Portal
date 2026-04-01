@@ -130,18 +130,23 @@ USE_TZ = True
 
 
 # settings.py
-# settings.py
 
-# settings.py
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 465               # Changed from 587
-EMAIL_USE_TLS = False          # Changed to False
-EMAIL_USE_SSL = True           # Changed to True
+
+# 1. Force the use of an IPv4 address for Gmail's SMTP
+# '74.125.142.108' is one of Gmail's primary IPv4 SMTP addresses
+EMAIL_HOST = '74.125.142.108' 
+
+# 2. Use Port 587 with TLS (Most stable on Render)
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+# 3. Explicitly set a timeout to prevent Gunicorn from killing the worker
+EMAIL_TIMEOUT = 30 
+
+# 4. Your existing credentials
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-# Add this to settings.py
-EMAIL_TIMEOUT = 10  # Seconds
 
 
 # Static files (CSS, JavaScript, Images)
