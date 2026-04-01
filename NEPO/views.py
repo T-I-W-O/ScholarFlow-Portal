@@ -13,6 +13,8 @@ from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.html import strip_tags
+from django.http import HttpResponse
+import traceback # Essential for debugging
 from django.views.decorators.csrf import csrf_exempt
 from .models import * # Note: Generally better to list models explicitly
 from .decorators import admin_only
@@ -97,7 +99,10 @@ def apply(request):
         except Exception as e:
             # If anything fails here (like a DB connection issue), 
             # we catch the specific error message.
-            messages.error(request, f"An error occurred: {str(e)}")
+            # This will stop the execution and show you the exact error in the browser
+            tb = traceback.format_exc()
+            return HttpResponse(f"<h3>Email Sending Failed</h3><pre>{tb}</pre>", status=500)
+            
             return render(request, 'apply.html')
 
     return render(request, 'apply.html')
