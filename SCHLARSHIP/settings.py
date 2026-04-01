@@ -51,6 +51,8 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
+
+
 ROOT_URLCONF = 'SCHLARSHIP.urls'
 
 TEMPLATES = [

@@ -4,9 +4,20 @@ import random
 import string
 from django.utils import timezone
 from datetime import timedelta
+from django.contrib.auth import get_user_model
+
+
+
+User = get_user_model()  # get the AUTH_USER_MODEL
 
 class PasswordResetCode(models.Model):
-    student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='reset_codes',null=True, blank=True)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reset_codes',
+        null=True,
+        blank=True
+    )
     code = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
     is_used = models.BooleanField(default=False)
@@ -17,14 +28,14 @@ class PasswordResetCode(models.Model):
         return timezone.now() < expiration_time and not self.is_used
 
     def __str__(self):
-        return f"Code for {self.student.email}: {self.code}"
+        return f"Code for {self.user.email}: {self.code}"
 
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='customer')
     name = models.CharField(max_length=200)
     number = models.CharField(max_length=11)
-    email = models.EmailField(max_length=100)
+    email = models.EmailField(max_length=100,unique=True)
     university = models.CharField(max_length=200)
     course = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)

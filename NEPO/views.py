@@ -18,10 +18,20 @@ from .models import * # Note: Generally better to list models explicitly
 from .decorators import admin_only
 import requests
 #---------------------------------------
+import requests
+from django.http import JsonResponse
+
 def get_universities(request):
-    url = "https://universities.hipolabs.com/search?country=Nigeria"
-    res = requests.get(url)
-    return JsonResponse(res.json(), safe=False)
+    url = "http://universities.hipolabs.com/search?country=Nigeria" # Try http if https fails
+    try:
+        # Added a 5-second timeout so your server doesn't hang forever
+        res = requests.get(url, timeout=5)
+        res.raise_for_status() 
+        return JsonResponse(res.json(), safe=False)
+    except Exception as e:
+        # Log the error and return an empty list so the frontend doesn't crash
+        print(f"API Error: {e}")
+        return JsonResponse([], safe=False)
 
 
 def apply(request):
@@ -114,8 +124,9 @@ def schlarship(request):
 
     return render(request, 'schlarship.html', context)
 
-def login(request):
+from django.contrib.auth.models import User
 
+def login(request):
     # 1. USER ALREADY LOGGED IN
     if request.user.is_authenticated:
 
@@ -146,7 +157,15 @@ def login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        user = authenticate(request, username=email, password=password)
+        # --- ADDED LOGIC (email -> username) ---
+        try:
+            user_obj = User.objects.get(email=email)
+            username = user_obj.username
+        except User.DoesNotExist:
+            username = None
+        # --------------------------------------
+
+        user = authenticate(request, username=username, password=password)
 
         if user is not None:
             auth_login(request, user)
@@ -177,38 +196,40 @@ def success(request):
     student = request.user.customer 
     return render(request, 'sucess.html', {'student': student})
 
+from django.contrib.auth import get_user_model
+
+User = get_user_model()  # use Django's user model
+
 def forgot_password(request):
     if request.method == 'POST':
         email_input = request.POST.get('email')
         
         try:
-            # Look for the student by email
-            student = Student.objects.get(email=email_input)
+            # Look for the user by email
+            user = User.objects.get(email=email_input)
             
             # 1. Generate a 6-digit code (format: 123456)
-            # To match your template's 842-195 style, we'll format it in the template
             reset_code_raw = ''.join(random.choices('0123456789', k=6))
             
             # 2. Save code to database
-            PasswordResetCode.objects.create(student=student, code=reset_code_raw)
+            PasswordResetCode.objects.create(user=user, code=reset_code_raw)
             
             # 3. Prepare HTML Email
-            # Splitting code for the dash: 123456 -> 123-456
             display_code = f"{reset_code_raw[:3]}-{reset_code_raw[3:]}"
             
             subject = "Password Recovery Code - NepoScholarship"
             context = {
-                'name': student.name,
+                'name': getattr(user, 'name', user.username),  # fallback if 'name' not on user
                 'code': display_code,
             }
             
             html_message = render_to_string('emails/password_reset_email.html', context)
-            plain_message = strip_tags(html_message) # Fallback for text-only clients
+            plain_message = strip_tags(html_message)
 
             send_mail(
                 subject=subject,
                 message=plain_message,
-                from_email= settings.EMAIL_HOST_USER,
+                from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[email_input],
                 html_message=html_message,
                 fail_silently=False,
@@ -218,7 +239,7 @@ def forgot_password(request):
             messages.success(request, "A recovery code has been sent to your email.")
             return redirect('verify') 
 
-        except Student.DoesNotExist:
+        except User.DoesNotExist:
             messages.error(request, "This email is not registered in our system.")
             
     return render(request, 'account_recovery.html')
