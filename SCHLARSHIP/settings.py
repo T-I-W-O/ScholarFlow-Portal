@@ -14,6 +14,16 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
+import socket
+
+# FORCE IPV4 ONLY (Fixes Render/Gmail "Network Unreachable" & "SSL Mismatch")
+orig_getaddrinfo = socket.getaddrinfo
+def patched_getaddrinfo(*args, **kwargs):
+    responses = orig_getaddrinfo(*args, **kwargs)
+    return [res for res in responses if res[0] == socket.AF_INET]
+
+socket.getaddrinfo = patched_getaddrinfo
+
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -131,20 +141,15 @@ USE_TZ = True
 
 # settings.py
 
+# settings.py
 
-# 1. Force the use of an IPv4 address for Gmail's SMTP
-# '74.125.142.108' is one of Gmail's primary IPv4 SMTP addresses
-EMAIL_HOST = '74.125.142.108' 
-
-# 2. Use Port 587 with TLS (Most stable on Render)
-EMAIL_PORT = 587
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # USE THE HOSTNAME AGAIN
+EMAIL_PORT = 587               # Use 587 for TLS
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
+EMAIL_TIMEOUT = 30
 
-# 3. Explicitly set a timeout to prevent Gunicorn from killing the worker
-EMAIL_TIMEOUT = 30 
-
-# 4. Your existing credentials
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
